@@ -37,6 +37,8 @@
 #define NWIPE_KNOB_SLEEP                  1
 #define NWIPE_KNOB_STAT                   "/proc/stat"
 
+#define MAX_NUMBER_EXCLUDED_DRIVES        5
+
 /* Function prototypes for loading options from the environment and command line. */
 int nwipe_options_parse( int argc, char** argv );
 void nwipe_options_log( void );
@@ -55,6 +57,7 @@ typedef struct /* nwipe_options_t */
 //	nwipe_method_t method;    /* A function pointer to the wipe method that will be used.   */
 	void*          method;    /* A function pointer to the wipe method that will be used.   */
 	char           logfile[FILENAME_MAX];   /* The filename to log the output to            */
+	char*          exclude_drives[MAX_NUMBER_EXCLUDED_DRIVES]; /* Drives excluded from the search */
 	nwipe_prng_t*  prng;      /* The pseudo random number generator implementation.         */
 	int            rounds;    /* The number of times that the wipe method should be called. */
 	int            sync;      /* A flag to indicate whether writes should be sync'd.        */
