@@ -451,6 +451,10 @@ display_help()
   puts("      --nosignals         Do not allow signals to interrupt a wipe (default is to allow)" );
   puts("      --nogui             Do not show the GUI interface. Automatically invokes the nowait option" );
   puts("                          Must be used with --autonuke option. Send SIGUSR1 to log current stats");
+  puts("  -e, --exclude=DEVICES   Up to ten comma separted devices to be excluded, examples:");
+  puts("                          --exclude=/dev/sdc");
+  puts("                          --exclude=/dev/sdc,/dev/sdd");
+  puts("                          --exclude=/dev/sdc,/dev/sdd,/dev/mapper/cryptswap1");
   puts("");
   exit( EXIT_SUCCESS );
 }
