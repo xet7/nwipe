@@ -104,9 +104,21 @@ int nwipe_device_get( nwipe_context_t*** c, char **devnamelist, int ndevnames )
 
 int check_device( nwipe_context_t*** c, PedDevice* dev, int dcount )
 {
-	/* Populate this struct, then assign it to overall array of structs. */
-	nwipe_context_t* next_device;
-    int fd;
+        /* Populate this struct, then assign it to overall array of structs. */
+        nwipe_context_t* next_device;
+        int fd;
+        int idx;
+
+        /* Check whether this drive is on the excluded drive list ? */
+        idx=0;
+        while ( idx < 10 )
+        {
+					if ( !strcmp( dev->path, nwipe_options.exclude[idx++] ))
+					{
+							nwipe_log( NWIPE_LOG_NOTICE, "Device %s excluded as per command line option -e", dev->path );
+							return 0;
+					}
+        }
 
         /* Try opening the device to see if it's valid. Close on completion. */
         if (!ped_device_open(dev))

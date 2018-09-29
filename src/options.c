@@ -47,9 +47,14 @@ int nwipe_options_parse( int argc, char** argv )
 
 	/* Array index variable. */
 	int i;
+	
+	/* Excluded drive indexes */
+	int idx_drive_chr;
+	int idx_optarg;
+	int idx_drive;
 
 	/* The list of acceptable short options. */
-	char nwipe_options_short [] = "Vhl:hm:p:r:";
+	char nwipe_options_short [] = "Vhl:hm:p:r:e:";
 
 	/* The list of acceptable long options. */
 	static struct option nwipe_options_long [] =
@@ -65,6 +70,9 @@ int nwipe_options_parse( int argc, char** argv )
 
 		/* Log file. Corresponds to the 'l' short option. */
 		{ "logfile", required_argument, 0, 'l' },
+		
+		/* Exclude devices, comma separated list */
+		{ "exclude", required_argument, 0, 'e' },
 
 		/* The Pseudo Random Number Generator. */
 		{ "prng", required_argument, 0, 'p' },
@@ -110,7 +118,10 @@ int nwipe_options_parse( int argc, char** argv )
 	nwipe_options.sync     = 0;
 	nwipe_options.verify   = NWIPE_VERIFY_LAST;
 	memset( nwipe_options.logfile, '\0', sizeof(nwipe_options.logfile) );
-
+	
+	/* Initialise each of the strings in the excluded drives array */
+	for ( i=0; i < MAX_NUMBER_EXCLUDED_DRIVES; i++ )
+		nwipe_options.exclude[i][0]=0;
 
 	/* Parse command line options. */
 	while( 1 )
@@ -240,6 +251,46 @@ int nwipe_options_parse( int argc, char** argv )
 				
 				nwipe_options.logfile[strlen(optarg)] = '\0';
 				strncpy(nwipe_options.logfile, optarg, sizeof(nwipe_options.logfile));
+				break;
+				
+			case 'e':  /* exclude drives option */
+				
+				idx_drive_chr=0;
+				idx_optarg=0;
+				idx_drive=0;
+				
+				/* Create an array of excluded drives from the comma separated string */
+				while ( optarg[idx_optarg] != 0 && idx_drive<MAX_NUMBER_EXCLUDED_DRIVES )
+				{
+					/* drop the leading '=' character if used */
+					if ( optarg[idx_optarg] == '=' && idx_optarg == 0 )
+					{	idx_optarg++;
+						continue;
+					}
+						
+					if ( optarg[idx_optarg] == ',' )
+					{	
+						/* terminate string and move onto next drive */
+						nwipe_options.exclude[idx_drive++][idx_drive_chr]=0;
+						idx_drive_chr=0;
+						idx_optarg++;
+					}
+					else
+					{
+						if ( idx_drive_chr < MAX_DRIVE_PATH_LENGTH )
+						{
+							nwipe_options.exclude[idx_drive][idx_drive_chr++]=optarg[idx_optarg++];
+						}
+						else
+						{	/* This section deals with file names that exceed MAX_DRIVE_PATH_LENGTH */
+							nwipe_options.exclude[idx_drive][idx_drive_chr]=0;
+							while ( optarg[idx_optarg] != 0 || optarg[idx_optarg] != ',' )
+							{
+								idx_optarg++;
+							}
+						}
+					}
+				}
 				break;
 
 			case 'h':  /* Display help. */
