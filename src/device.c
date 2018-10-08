@@ -160,7 +160,6 @@ int check_device( nwipe_context_t*** c, PedDevice* dev, int dcount )
         */
         ioctl(fd, HDIO_GET_IDENTITY, &next_device->identity);
         close( fd );
-		  int idx;
 		  for (idx=0; idx<20; idx++) next_device->serial_no[idx]=next_device->identity.serial_no[idx];
 		  next_device->serial_no[20]=0; /* terminate the string */
         trim ( (char*) next_device->serial_no ); /* Remove leading/training whitespace from serial number and left justify */
