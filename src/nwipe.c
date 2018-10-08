@@ -26,7 +26,6 @@
 #include <time.h>
 #include <signal.h>
 #include <pthread.h>
-#include <bits/sigset.h>
 #include <bits/pthreadtypes.h>
 #include <bits/sigthread.h>
 
@@ -53,8 +52,7 @@ int main( int argc, char** argv )
         int nwipe_enumerated;          /* The number of contexts that have been enumerated. */
         int nwipe_error = 0;           /* An error counter.                                 */
         int nwipe_selected = 0;        /* The number of contexts that have been selected.   */
-        pthread_t nwipe_gui_thread = 0;/* The thread ID of the GUI thread.
-                                          Must be initialised to prevent segfault on Contol-C without doing a wipe */
+        pthread_t nwipe_gui_thread = 0;    /* The thread ID of the GUI thread.                  */
         pthread_t nwipe_sigint_thread; /* The thread ID of the sigint handler.              */
 
         /* The entropy source file handle. */
@@ -293,8 +291,8 @@ int main( int argc, char** argv )
                 */
 
                 /* Print serial number of device if it exists. */
-                if ( strlen((const char*)c2[i]->identity.serial_no) ) {
-                        nwipe_log( NWIPE_LOG_INFO, "Device %s has serial number %s", c2[i]->device_name, c2[i]->identity.serial_no);
+                if ( strlen((const char*)c2[i]->serial_no) ) {
+                        nwipe_log( NWIPE_LOG_INFO, "Device %s has serial number %s", c2[i]->device_name, c2[i]->serial_no);
                 }
                 
 
